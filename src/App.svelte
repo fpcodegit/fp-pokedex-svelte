@@ -30,38 +30,34 @@
     let pokemonPromise;
 </script>
 
-<main>
+<div class="container">
     {#await pokedexPromise}
         <p class="left">...waiting</p>
     {:then pokedex}
         <div class="left">
-            <ul>
-                {#each pokedex.pokemons as {name, imageUrl, types, weight, abilities, description, evolutions, links}, i}
-                    <li>
-                        <button on:click={()=>pokemonDetails(links[0].href)}>
-                            <img src={imageUrl} alt={name}>
-                            <p>{name}</p>
-                        </button>
-                        <p>Types:</p>
-                        <ul>
-                            {#each types as {}, i}
-                                <li>
-                                    <p>{i + 1} : {types[i]}</p>
-                                </li>
-                            {/each}
-                        </ul>
-                        <p>Weight: {weight} <b>hg</b></p>
-                        <p>Abilities:</p>
-                        <ul>
-                            {#each abilities as {}, i}
-                                <li>
-                                    <p>{i + 1} : {abilities[i]}</p>
-                                </li>
-                            {/each}
-                        </ul>
-                    </li>
-                {/each}
-            </ul>
+            {#each pokedex.pokemons as {name, imageUrl, types, weight, abilities, description, evolutions, links}, i}
+                <button class="card" on:click={()=>pokemonDetails(links[0].href)}>
+                    <img src={imageUrl} alt={name}>
+                    <p>{name}</p>
+                    <p>Types:</p>
+                    <ul>
+                        {#each types as {}, i}
+                            <li>
+                                <p>{i + 1} : {types[i]}</p>
+                            </li>
+                        {/each}
+                    </ul>
+                    <p>Weight: {weight} <b>hg</b></p>
+                    <p>Abilities:</p>
+                    <ul>
+                        {#each abilities as {}, i}
+                            <li>
+                                <p>{i + 1} : {abilities[i]}</p>
+                            </li>
+                        {/each}
+                    </ul>
+                </button>
+            {/each}
         </div>
         {#if pokemonPromise !== undefined}
             {#await pokemonPromise}
@@ -98,17 +94,38 @@
                     </ul>
                 </div>
             {:catch error}
-                <p class="right" style="color: red">{error.message}</p>
+                <p class="right error">{error.message}</p>
             {/await}
         {/if}
     {:catch error}
-        <p class="left" style="color: red">{error.message}</p>
+        <p class="left error">{error.message}</p>
     {/await}
-</main>
+</div>
 
 <style>
     .left, .right {
         width: 48%;
-        display: inline-block;
+    }
+
+    .error {
+        color: red;
+    }
+
+    .container {
+        width: 100%;
+        display: inline-flex;
+    }
+
+    .card {
+        border-radius: 2.5%;
+        margin: 1%;
+        background: transparent;
+        height: 50%;
+    }
+
+    ul {
+        list-style-type: none;
+        padding: 0;
+        margin: 0;
     }
 </style>
