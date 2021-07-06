@@ -18,12 +18,20 @@
         }
     }
 
-    function pokemonDetails(url) {
-        getPokemon(url);
-    }
-
     async function getPokemon(url) {
         pokemonPromise = getJsonFrom(url);
+    }
+
+    function getLink(links, rel) {
+        return links.filter(link => link.rel === rel)[0].href
+    }
+
+    function getPokemonDetails(links) {
+        return () => getPokemon(getLink(links, 'self'));
+    }
+
+    function getPokemonList(links, rel) {
+        return () => pokedexPromise = getJsonFrom(getLink(links, rel));
     }
 
     let pokedexPromise = getPokemonListWithLimitAndOffset(startLimit, startOffset);
@@ -35,29 +43,35 @@
         <p class="left">...waiting</p>
     {:then pokedex}
         <div class="left">
-            {#each pokedex.pokemons as {name, imageUrl, types, weight, abilities, description, evolutions, links}, i}
-                <button class="card" on:click={()=>pokemonDetails(links[0].href)}>
-                    <img src={imageUrl} alt={name}>
-                    <p>{name}</p>
-                    <p>Types:</p>
-                    <ul>
-                        {#each types as {}, i}
-                            <li>
-                                <p>{i + 1} : {types[i]}</p>
-                            </li>
-                        {/each}
-                    </ul>
-                    <p>Weight: {weight} <b>hg</b></p>
-                    <p>Abilities:</p>
-                    <ul>
-                        {#each abilities as {}, i}
-                            <li>
-                                <p>{i + 1} : {abilities[i]}</p>
-                            </li>
-                        {/each}
-                    </ul>
-                </button>
-            {/each}
+            <div>
+                {#each pokedex.pokemons as {name, imageUrl, types, weight, abilities, description, evolutions, links}, i}
+                    <button class="card" on:click={getPokemonDetails(links)}>
+                        <img src={imageUrl} alt={name}>
+                        <p>{name}</p>
+                        <p>Types:</p>
+                        <ul>
+                            {#each types as {}, i}
+                                <li>
+                                    <p>{i + 1} : {types[i]}</p>
+                                </li>
+                            {/each}
+                        </ul>
+                        <p>Weight: {weight} <b>hg</b></p>
+                        <p>Abilities:</p>
+                        <ul>
+                            {#each abilities as {}, i}
+                                <li>
+                                    <p>{i + 1} : {abilities[i]}</p>
+                                </li>
+                            {/each}
+                        </ul>
+                    </button>
+                {/each}
+            </div>
+            <div>
+                <button on:click={getPokemonList(pokedex.links,'prev')}>Prev</button>
+                <button on:click={getPokemonList(pokedex.links,'next')}>Next</button>
+            </div>
         </div>
         {#if pokemonPromise !== undefined}
             {#await pokemonPromise}
