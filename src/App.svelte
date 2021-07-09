@@ -1,9 +1,10 @@
 <script>
+    export let baseUrl;
     export let startLimit;
     export let startOffset;
 
     async function getPokemonListWithLimitAndOffset(limit, offset) {
-        let url = 'http://localhost:8080/pokedex?limit=' + limit + '&offset=' + offset;
+        let url = baseUrl + '?limit=' + limit + '&offset=' + offset;
         return getJsonFrom(url);
     }
 
