@@ -18,16 +18,12 @@
         }
     }
 
-    async function getPokemon(url) {
-        pokemonPromise = getJsonFrom(url);
-    }
-
     function getLink(links, rel) {
         return links.filter(link => link.rel === rel)[0].href
     }
 
-    function getPokemonDetails(links) {
-        return () => getPokemon(getLink(links, 'self'));
+    function getPokemonDetails(pokemon) {
+        pokemonDetail = pokemon;
     }
 
     function getPokemonList(links, rel) {
@@ -35,7 +31,7 @@
     }
 
     let pokedexPromise = getPokemonListWithLimitAndOffset(startLimit, startOffset);
-    let pokemonPromise;
+    let pokemonDetail;
 </script>
 
 <div class="container">
@@ -45,7 +41,7 @@
         <div class="left">
             <div>
                 {#each pokedex.pokemons as {name, imageUrl, types, weight, abilities, description, evolutions, links}, i}
-                    <button class="card" on:click={getPokemonDetails(links)}>
+                    <button class="card" on:click={getPokemonDetails(pokedex.pokemons[i])}>
                         <img src={imageUrl} alt={name}>
                         <p>{name}</p>
                         <p>Types:</p>
@@ -73,47 +69,41 @@
                 <button on:click={getPokemonList(pokedex.links,'next')}>Next</button>
             </div>
         </div>
-        {#if pokemonPromise !== undefined}
-            {#await pokemonPromise}
-                <p class="right">...loading</p>
-            {:then pokemon}
-                <div class="right">
-                    <h1>{pokemon.name}</h1>
-                    <img src={pokemon.imageUrl} alt={pokemon.name}>
-                    <p>{pokemon.description}</p>
-                    <p>Types:</p>
-                    <ul>
-                        {#each pokemon.types as {}, i}
-                            <li>
-                                <p>{i + 1} : {pokemon.types[i]}</p>
-                            </li>
-                        {/each}
-                    </ul>
-                    <p>Weight: {pokemon.weight} <b>hg</b></p>
-                    <p>Abilities:</p>
-                    <ul>
-                        {#each pokemon.abilities as {}, i}
-                            <li>
-                                <p>{i + 1} : {pokemon.abilities[i]}</p>
-                            </li>
-                        {/each}
-                    </ul>
-                    <p>Evolutions:</p>
-                    <ul>
-                        {#each pokemon.evolutions as {}, i}
-                            <li>
-                                <p>{i + 1} : {pokemon.evolutions[i]}</p>
-                            </li>
-                        {/each}
-                    </ul>
-                </div>
-            {:catch error}
-                <p class="right error">{error.message}</p>
-            {/await}
-        {/if}
     {:catch error}
         <p class="left error">{error.message}</p>
     {/await}
+    {#if pokemonDetail !== undefined}
+        <div class="right">
+            <h1>{pokemonDetail.name}</h1>
+            <img src={pokemonDetail.imageUrl} alt={pokemonDetail.name}>
+            <p>{pokemonDetail.description}</p>
+            <p>Types:</p>
+            <ul>
+                {#each pokemonDetail.types as {}, i}
+                    <li>
+                        <p>{i + 1} : {pokemonDetail.types[i]}</p>
+                    </li>
+                {/each}
+            </ul>
+            <p>Weight: {pokemonDetail.weight} <b>hg</b></p>
+            <p>Abilities:</p>
+            <ul>
+                {#each pokemonDetail.abilities as {}, i}
+                    <li>
+                        <p>{i + 1} : {pokemonDetail.abilities[i]}</p>
+                    </li>
+                {/each}
+            </ul>
+            <p>Evolutions:</p>
+            <ul>
+                {#each pokemonDetail.evolutions as {}, i}
+                    <li>
+                        <p>{i + 1} : {pokemonDetail.evolutions[i]}</p>
+                    </li>
+                {/each}
+            </ul>
+        </div>
+    {/if}
 </div>
 
 <style>
