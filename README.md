@@ -2,7 +2,8 @@
 Developed using [Svelte](https://svelte.dev/)
 
 Simple UI with 2 sides, the left one shows a list of pokemons after loading from server plus 2 buttons 
-to navigate between pages and the right side shows the detail of the pokemon after is clicked from the list on the left.
+to navigate between pages, and the right side shows the detail of the pokemon after is clicked from the 
+list on the left.
 
 #####Deploy instructions
 ######Heroku:
